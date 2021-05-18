@@ -4,7 +4,7 @@ namespace exception
 {
     public interface IServerReporter
     {
-        // результирующий ответ сервера
+        // server answer resault
         bool Report(String kind);
     }
 }

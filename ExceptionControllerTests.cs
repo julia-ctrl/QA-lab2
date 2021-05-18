@@ -62,9 +62,8 @@ namespace exception.tests
         [TestCase(typeof(InvalidOperationException), false)]
         public void IsCritical_CriticalityCheck_CorrectMethodRun(Type exceptionType, bool expectedResult)
         {
-            // arrange
             var instance = (Exception)Activator.CreateInstance(exceptionType);
-            // 1. Use a LW2Factory
+
             var controller = new ExceptionControllerFactory()
                 .WithList(TestSetup.ListSource)
                 .WithServer(TestSetup.NormalServerReporter)
@@ -72,12 +71,10 @@ namespace exception.tests
 
             try
             {
-                // act
                 throw instance;
             }
             catch (Exception e)
             {
-                // assert
                 Assert.AreEqual(expectedResult, controller.IsCritical(e));
                 return;
             }
@@ -86,14 +83,11 @@ namespace exception.tests
         [Test]
         public void CountExceptions_ProvidedListExceptionCount_CorrectCorrect()
         {
-            // arrange
-            // 2. Use constructor
             var controller = new ExceptionControllerFactory()
                 .WithList(TestSetup.ListSource)
                 .WithServer(TestSetup.NormalServerReporter)
                 .Create();
 
-            // act
             foreach (var item in TestData.CriticalExceptions)
             {
                 var instance = (Exception)Activator.CreateInstance(item);
@@ -105,36 +99,28 @@ namespace exception.tests
                 controller.CountExceptions(instance);
             }
 
-            // assert
             Assert.AreEqual(controller.CounterCriticalExceptions, TestData.CriticalExceptions.Count);
             Assert.AreEqual(controller.CounterNotCriticalExceptions, TestData.NonCriticalExceptions.Count);
         }
 
         [Test]
-        public void CountExceptions_InitState_Zero()
+        public void CounterExceptions_InitState_Zero()
         {
-            // arrange
-            // 3. Use property access
             var controller = new ExceptionControllerFactory()
                 .WithList(TestSetup.ListSource)
                 .WithServer(TestSetup.NormalServerReporter)
                 .Create();
 
-            // act: nothing
-
-            // assert
             Assert.AreEqual(controller.CounterCriticalExceptions, 0);
             Assert.AreEqual(controller.CounterNotCriticalExceptions, 0);
         }
 
         [Test]
-        public void IServerReporter_FailureServerAnswersCounter_CorrectCount()
+        public void CountExceptions_FailureServerAnswersCounter_CorrectCount()
         {
-            // arrange
             var controllerNormal = new ExceptionController(TestSetup.ListSource, TestSetup.NormalServerReporter);
             var controllerFailling = new ExceptionController(TestSetup.ListSource, TestSetup.FailingServerReporter);
 
-            // act
             foreach (var item in TestData.CriticalExceptions)
             {
                 var instance = (Exception)Activator.CreateInstance(item);
@@ -142,21 +128,18 @@ namespace exception.tests
                 controllerFailling.CountExceptions(instance);
             }
 
-            // assert
             Assert.AreEqual(controllerNormal.ReportFailures, 0);
             Assert.AreEqual(controllerFailling.ReportFailures, TestData.CriticalExceptions.Count);
         }
 
         [Test]
-        public void TelemetryReport_InitState_Zero()
+        public void ReportFailures_InitState_Zero()
         {
-            // arrange
             var controller = new ExceptionControllerFactory()
                 .WithList(TestSetup.ListSource)
                 .WithServer(TestSetup.NormalServerReporter)
                 .Create();
 
-            // assert
             Assert.AreEqual(controller.ReportFailures, 0);
         }
     }

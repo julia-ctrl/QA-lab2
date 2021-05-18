@@ -10,21 +10,19 @@ namespace exception
 
         public ExceptionControllerFactory() { }
 
-        // инициализирует список критических исключений 
         public ExceptionControllerFactory WithList(IListSource src)
         {
             m_list = src;
             return this;
         }
 
-        // инициализирует сервер
         public ExceptionControllerFactory WithServer(IServerReporter rep)
         {
             m_server = rep;
             return this;
         }
 
-        // создает объект ExceptionController
+        // ExceptionController object creation
         public ExceptionController Create()
         {
             return new ExceptionController(m_list, m_server);
